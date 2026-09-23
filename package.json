@@ -1,6 +1,6 @@
 {
   "name": "macky",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Macky — local-first personal AI computer assistant for macOS. M1: foundation + security spec + deterministic kernel skeleton.",
   "type": "module",

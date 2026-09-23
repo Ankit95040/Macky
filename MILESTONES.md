@@ -19,7 +19,21 @@ tests MUST remain green unmodified (additive extension only).
 Checkpoint: commit `4fccbab`, tag `m3-read-only-execution`. 104/104 tests.
 M3 behavior frozen; M1/M2/M3 tests MUST remain green unmodified.
 
-## M4 — Durable Security State & Audit (current)
+## M4 — Durable Security State & Audit (accepted, frozen)
+
+Checkpoint: commit `37ac133`, tag `m4-durable-security`. 130/130 tests.
+M4 behavior frozen; all prior tests MUST remain green unmodified.
+
+## M5 — LLM Planner Integration (current)
+
+Scope: versioned strict planner contract, offline MockPlanner
+(valid + malicious), single trust boundary (validate → trusted
+task binding → closed translation → M2 → M3 → M4 durable audit).
+No real LLM, no network, no new runtime dependencies.
+
+Acceptance: full suite green, typecheck, build, planner static
+scan (no OS/network imports), secret scan, diff review, then tag
+`m5-planner-boundary`.
 
 Scope: security-state model + atomic state file, safe boot (SLEEP,
 epoch+1, empty authority), durable JSONL hash-chained audit with
