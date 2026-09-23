@@ -47,11 +47,32 @@ export interface OrchestratorContext {
 }
 
 /**
- * Implemented by outer layers (M7 workspace service). Type lives here
- * so conversation never imports them — dependency direction preserved.
+ * Implemented by outer layers (M7 workspace service, M8 command
+ * service). Type lives here so conversation never imports them —
+ * dependency direction preserved. May be async: command execution
+ * takes real time; callers always await.
  */
 export interface ProposalRouter {
-  tryRoute(output: unknown, taskId: string): DurableResult | undefined;
+  tryRoute(output: unknown, taskId: string): DurableResult | Promise<DurableResult> | undefined;
+}
+
+/**
+ * Ordered router composite: first router claiming an output wins,
+ * unclaimed outputs fall through to the next (ultimately M5).
+ * Additive; no-router behavior is byte-identical.
+ */
+export function combineRouters(...routers: Array<ProposalRouter>): ProposalRouter {
+  return {
+    tryRoute(output: unknown, taskId: string): DurableResult | Promise<DurableResult> | undefined {
+      for (const router of routers) {
+        const claimed = router.tryRoute(output, taskId);
+        if (claimed !== undefined) {
+          return claimed;
+        }
+      }
+      return undefined;
+    },
+  };
 }
 
 export function createOrchestratorContext(
@@ -239,10 +260,11 @@ export async function handleUserMessage(
       }
       return toAssistant("responded", iteration, taskId, final.data.text);
     }
-    // Single routing point: an outer-layer router (M7 workspace) may
-    // claim the output first; otherwise the exact M5 path runs. Either
-    // way the result is a DurableResult handled uniformly below.
-    const routed = ctx.proposalRouter?.tryRoute(output, taskId);
+    // Single routing point: outer-layer routers (M7 workspace, M8
+    // commands) may claim the output first; otherwise the exact M5
+    // path runs. Either way the result is a DurableResult handled
+    // uniformly below. Always awaited: command routers are async.
+    const routed = await ctx.proposalRouter?.tryRoute(output, taskId);
     const handled = routed ?? handleProposal(ctx.session, { epoch: ctx.session.epoch, taskId, output });
     if (handled.outcome.status === "completed") {
       if (!appendMessage(ctx, "tool", toolTextFor(handled.outcome.result))) {

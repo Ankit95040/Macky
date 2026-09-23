@@ -99,8 +99,7 @@ export interface DurableResult {
   readonly log: AuditLog;
 }
 
-function persistInternal(
-  session: SecureSession,
+function persistInternal(  session: SecureSession,
   type: string,
   detail: string,
 ): boolean {
@@ -115,6 +114,31 @@ function persistInternal(
     return false;
   }
   return true;
+}
+
+/**
+ * Persist in-memory log events appended since `fromLength` to the
+ * durable sink. Shared by runDurable (M4) and command execution (M8)
+ * so both report decision/persistence separately. Degrades the
+ * session on any failure.
+ */
+export function persistLogDelta(session: SecureSession, fromLength: number): boolean {
+  let ok = true;
+  for (const event of session.log.events.slice(fromLength)) {
+    const r = appendAuditEvent(session.sink, {
+      type: event.type,
+      detail: event.detail,
+      epoch: session.epoch,
+      sleep: event.sleepState,
+    });
+    if (!r.ok) {
+      ok = false;
+    }
+  }
+  if (!ok) {
+    session.auditHealthy = false;
+  }
+  return ok;
 }
 
 /** Trusted grant issuance into the live session (audited). */

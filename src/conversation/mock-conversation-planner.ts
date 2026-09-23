@@ -124,6 +124,27 @@ export class MockConversationPlanner implements ConversationPlanner {
       }
       return { ...base, op: `git-${op.toLowerCase()}`, path: rel };
     }
+    // M8 command language: `run <id> [args...]` (whitespace-split;
+    // quoted/multi-word args unsupported by the mock). Emits an M8
+    // command proposal — validated, classified, and M2-authorized
+    // downstream like everything else.
+    const run = /^run\s+(\S+)(?:\s+(.*))?\s*$/i.exec(text);
+    if (run !== null) {
+      const word = run[1];
+      if (word === undefined) {
+        return undefined;
+      }
+      const rest = run[2] ?? "";
+      const argv = rest.length > 0 ? rest.split(/\s+/) : [];
+      return {
+        v: 1,
+        operation: "command-exec",
+        commandId: `command.${word.toLowerCase()}`,
+        workspaceId: input.workspaceId ?? "ws-unknown",
+        cwd: ".",
+        argv,
+      };
+    }
     return undefined;
   }
 

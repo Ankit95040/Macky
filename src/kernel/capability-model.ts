@@ -117,6 +117,62 @@ export const CAPABILITY_DEFINITIONS: ReadonlyArray<CapabilityDefinition> =
       scoped: true,
       description: "Tier 0: bounded structure listing inside grant scope (M7).",
     }),
+    // ---- M8 controlled terminal execution (family "terminal" already
+    // exists, so no M2 type changes). One explicit capability per
+    // command — never a generic terminal capability. Tier3 commands
+    // have NO declarations here: absence + classifier refusal keeps
+    // them structurally denied. ----
+    def({
+      id: "command.echo",
+      family: "terminal",
+      operations: ["run"],
+      riskTier: 0,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: true,
+      description: "Tier 0: fixed /bin/echo with validated text argv (M8).",
+    }),
+    def({
+      id: "command.printf",
+      family: "terminal",
+      operations: ["run"],
+      riskTier: 0,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: true,
+      description: "Tier 0: fixed /usr/bin/printf, safe formats only (M8).",
+    }),
+    def({
+      id: "command.whoami",
+      family: "terminal",
+      operations: ["run"],
+      riskTier: 0,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: true,
+      description: "Tier 0: fixed /usr/bin/whoami, no argv (M8).",
+    }),
+    def({
+      id: "command.pwd",
+      family: "terminal",
+      operations: ["run"],
+      riskTier: 0,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: true,
+      description: "Tier 0: fixed /bin/pwd, no argv (M8).",
+    }),
+    def({
+      id: "command.id",
+      family: "terminal",
+      operations: ["run"],
+      riskTier: 2,
+      requiresConfirmation: true,
+      sleepGated: true,
+      scoped: true,
+      description:
+        "Tier 2: fixed /usr/bin/id exposes identity/group data — explicit human approval required (M8).",
+    }),
     // ---- terminal (authorization data only; no execution in M2) ----
     def({
       id: "terminal.run",
@@ -337,6 +393,8 @@ const PATH_FAMILIES: ReadonlySet<CapabilityFamily> = new Set([
   "git",
   "memory",
   "browser",
+  // M8: terminal command grants scope to a workspace root (path).
+  "terminal",
 ]);
 
 /** Normalize an absolute path; undefined when malformed or escaping. */

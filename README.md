@@ -4,7 +4,7 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M7 — workspace / file intelligence (read-only)
+## Status: M8 — controlled terminal execution (5 fixed commands, no shell)
 
 M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
 plus a deterministic, pure-function security kernel skeleton.
@@ -30,7 +30,11 @@ and injection batteries. See `M6_CONVERSATION.md`. M7 adds trusted
 workspace intelligence (`src/workspace/`): registered roots, task
 binding, relative-path resolution onto M3 enforcement, bounded
 find/search/tree adapters, versioned contracts, unicode-safe text.
-Read-only throughout. See `M7_WORKSPACE.md`.
+Read-only throughout. See `M7_WORKSPACE.md`. M8 adds strictly
+controlled command execution (`src/commands/`): a 5-entry trusted
+registry, deterministic classifier, Tier3-deny, bounded spawn with
+no shell and minimal env, all M2-authorized. See
+`M8_COMMAND_EXECUTION.md`.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements

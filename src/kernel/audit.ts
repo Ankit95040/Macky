@@ -72,6 +72,7 @@ export const SECURITY_EVENT_TYPES = [
   "limit.exceeded",
   "kill.engaged",
   "confirmation.recorded",
+  "command.timed-out",
 ] as const;
 
 export type SecurityEventType = (typeof SECURITY_EVENT_TYPES)[number];

@@ -34,7 +34,21 @@ M5 behavior frozen; all prior tests MUST remain green unmodified.
 Checkpoint: commit `14e0eed`, tag `m6-conversation-loop`. 173/173 tests.
 M6 behavior frozen; all prior tests MUST remain green unmodified.
 
-## M7 — Workspace / File Intelligence, Read-Only (current)
+## M7 — Workspace / File Intelligence, Read-Only (accepted, frozen)
+
+Checkpoint: commit `ec220be`, tag `m7-workspace-readonly`. 215/215 tests.
+M7 behavior frozen; all prior tests MUST remain green unmodified.
+
+## M8 — Controlled Terminal Execution (current)
+
+Scope: 5-command trusted registry (Tier0 ×4, Tier2 ×1, Tier3
+denylist), strict command schema, deterministic classifier, bounded
+spawn runner (no shell, minimal env, timeout escalation, slot
+guard), M2-authorized service, conversation `run` language,
+A–BF battery. No shell, sudo, writes, network, or autonomy.
+
+Acceptance: Gates 1–25 per the M8 brief, then tag
+`m8-controlled-terminal`. Do NOT push.
 
 Scope: trusted workspace registry + task binding, relative-path
 semantics on M3 enforcement, read/find/search/tree adapters,
