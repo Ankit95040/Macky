@@ -1,29 +1,37 @@
-# Macky Milestones & Gates (M1)
+# Macky Milestones & Gates
 
-## M1 — Foundation (current)
+## M1 — Foundation (accepted, frozen)
+
+Checkpoint: commit `52d03ae`, tag `m1-foundation`. 28/28 tests green.
+M1 files MUST NOT be modified; M1 tests MUST remain green unmodified.
 
 Scope: repo scaffold, normative docs, deterministic kernel skeleton,
 Vitest gates. No model, sensors, or OS control.
 
-Acceptance criteria (ALL required for `m1-foundation` tag):
+## M2 — Deterministic Security Boundary (current)
 
-- [ ] `ARCHITECTURE.md`, `SECURITY_SPEC.md`, `SLEEP_SPEC.md`,
-      `THREAT_MODEL.md` present and normative
-- [ ] `src/kernel/*` pure functions only (no fs/shell/net/macOS APIs)
-- [ ] SLEEP state machine explicit + tested (all 12 categories)
-- [ ] No wake-word path exists; wake is explicit-local-action only
-- [ ] Capabilities are types/interfaces; no unrestricted placeholders
-- [ ] `npm test` (vitest run) fully green
-- [ ] `npm run typecheck` (`tsc --noEmit`) clean
-- [ ] Git diff inspected; no secrets; only intended M1 scope
-- [ ] Checkpoint commit + tag `m1-foundation`
+Scope: structured action requests, capability registry, task-scoped
+grants, deterministic pipeline, risk tiers, confirmation boundary,
+sleep enforcement, revocation, audit events, adversarial tests.
+No executor, no model, no sensors, no OS control.
 
-## M2+ (not started; listed to prevent scope creep)
+Acceptance criteria (ALL required for `m2-security-boundary` tag):
 
-- M2: capability registry + confirmation UX (CLI stub) + audit file sink
-- M3: read-only tools behind the kernel (clock, file-info with
-  explicit grants) + adversarial tests
+- [ ] All M1 tests green, unmodified
+- [ ] New adversarial tests pass (request attacks, escalation, risk,
+      sleep, confirmation, policy, revocation, transitions, audit)
+- [ ] `npm test` fully green
+- [ ] `npm run typecheck` clean (existing strict config)
+- [ ] No OS/execution imports in `src/kernel/`
+- [ ] No new dependencies (or every addition explained)
+- [ ] No secrets / `.env` / tokens / keys
+- [ ] Git diff audited; only intended M2 scope
+- [ ] No M3 scope begun (LLM, voice, sensors, execution, GUI)
+- [ ] Working tree clean after checkpoint
+
+## M3+ (not started; listed to prevent scope creep)
+
+- M3: confirmation UX (CLI stub) + audit file sink + read-only tools
+  behind the kernel (clock, file-info with explicit grants)
 - M4+: local model wiring, voice, sensors — each behind S15
   boundaries, explicit human approval, and SLEEP gating.
-
-No M2 work begins until M1 is tagged.

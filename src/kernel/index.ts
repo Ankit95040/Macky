@@ -7,3 +7,7 @@ export * from "./capabilities.js";
 export * from "./confirm.js";
 export * from "./audit.js";
 export * from "./policy.js";
+export * from "./action-request.js";
+export * from "./capability-model.js";
+export * from "./task-grants.js";
+export * from "./authorize.js";

@@ -65,3 +65,54 @@ export function riskOf(value: unknown): RiskLevel | undefined {
   }
   return undefined;
 }
+
+// ---------------------------------------------------------------------------
+// M2: trusted confirmation store (M2 section 7).
+//
+// The policy engine returns REQUIRE_CONFIRMATION; only the TRUSTED
+// confirmation layer produces authorization state. This in-memory store
+// is the deterministic/mock provider sufficient for M2 testing — no
+// Touch ID, no voice authentication. Planner fields such as
+// `approved: true` or `confirmedBy: "user"` never reach this store:
+// the strict request schema rejects them at the boundary.
+// ---------------------------------------------------------------------------
+
+/** A confirmation recorded by trusted code (human/UI path), never by the planner. */
+export interface TrustedConfirmationRecord {
+  readonly taskId: string;
+  readonly capability: string;
+  readonly operation: string;
+  /** Redacted resource string; "" for unscoped capabilities. */
+  readonly resource: string;
+}
+
+export type ConfirmationStore = ReadonlyArray<TrustedConfirmationRecord>;
+
+const EMPTY_STORE: ConfirmationStore = Object.freeze([]);
+
+export function createConfirmationStore(): ConfirmationStore {
+  return EMPTY_STORE;
+}
+
+/** Record a trusted confirmation. Returns a NEW frozen store. */
+export function recordConfirmation(
+  store: ConfirmationStore,
+  record: TrustedConfirmationRecord,
+): ConfirmationStore {
+  const entry: TrustedConfirmationRecord = Object.freeze({ ...record });
+  return Object.freeze([...store, entry]);
+}
+
+/** Exact-match lookup: task + capability + operation + resource. */
+export function hasConfirmation(
+  store: ConfirmationStore,
+  key: TrustedConfirmationRecord,
+): boolean {
+  return store.some(
+    (r: TrustedConfirmationRecord): boolean =>
+      r.taskId === key.taskId &&
+      r.capability === key.capability &&
+      r.operation === key.operation &&
+      r.resource === key.resource,
+  );
+}

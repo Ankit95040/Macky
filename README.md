@@ -4,11 +4,16 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M1 — foundation only
+## Status: M2 — deterministic security boundary
 
-M1 contains normative specs plus a deterministic, pure-function
-security kernel skeleton. There is no model, voice, sensor, or OS
-control code, by design.
+M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
+plus a deterministic, pure-function security kernel skeleton.
+M2 adds the authorization boundary proving an untrusted planner can
+propose actions but cannot grant itself authority: structured action
+requests, capability registry with trusted risk tiers, task-scoped
+grants, deterministic pipeline, confirmation boundary, sleep
+enforcement, revocation, audit events, adversarial tests.
+There is no model, voice, sensor, executor, or OS control code.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements
