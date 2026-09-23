@@ -248,6 +248,22 @@ export const CAPABILITY_DEFINITIONS: ReadonlyArray<CapabilityDefinition> =
       scoped: false,
       description: "Tier 1: launch a trusted registered macOS app, nothing else (M11).",
     }),
+    // ---- M13 controlled speech announcement. Family "terminal" already
+    // exists (M2), so no M2 type changes — family is descriptive
+    // metadata per M11 precedent. Exactly one capability: Tier2,
+    // confirmation required, sleep-gated, unscoped (text-bound, not
+    // scope-bound). Spoken text is authorized via digest-bound
+    // confirmation checked in the speech service, not by M2 alone.
+    def({
+      id: "speech.announce",
+      family: "terminal",
+      operations: ["announce"],
+      riskTier: 2,
+      requiresConfirmation: true,
+      sleepGated: true,
+      scoped: false,
+      description: "Tier 2: speak one bounded validated text via fixed /usr/bin/say (M13).",
+    }),
     // ---- terminal (authorization data only; no execution in M2) ----
     def({
       id: "terminal.run",

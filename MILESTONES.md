@@ -59,7 +59,22 @@ M10 behavior frozen; all prior tests MUST remain green unmodified.
 Checkpoint: commit `ca54553`, tag `m11-controlled-app-launch`. 302/302 tests.
 M11 behavior frozen; all prior tests MUST remain green unmodified.
 
-## M12 — Real LLM Planner Boundary (current)
+## M12 — Real LLM Planner Boundary (accepted, frozen)
+
+Checkpoint: commit `157402c` + corrective `cd446c2`, tag `m12-real-llm-planner`. 327/327 tests.
+M12 behavior frozen; all prior tests MUST remain green unmodified.
+
+## M13 — Controlled Speech Announcement (current)
+
+Scope: one Tier2 speech.announce capability; strict text-only
+proposals; shared shell-char set + secret screen; additive digest
+field + strict digest matcher (existing confirmation behavior
+identical); fixed /usr/bin/say spawn with single argv; text-bound
+confirmation gate; A–AG battery. No messaging, voice choice,
+audio files, or autonomy.
+
+Acceptance: full suite + typecheck + build + scans green, then ONE
+commit. Do NOT create/move any tag. Do NOT push.
 
 Scope: real HTTPS provider abstraction (fixed shape, no SDK) +
 deterministic fake, trusted config, strict JSON parsing with

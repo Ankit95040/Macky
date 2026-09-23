@@ -4,7 +4,7 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M12 — real LLM planner boundary (offline by default, mock-tested)
+## Status: M13 — controlled speech announcement (one bounded utterance, Tier2)
 
 M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
 plus a deterministic, pure-function security kernel skeleton.
@@ -48,7 +48,9 @@ Launch only — never control. See `M11_APPS.md`. M12 integrates a
 real LLM as an untrusted proposal generator (`src/llm/`):
 fixed-shape HTTPS provider, strict JSON parsing, single-inference
 adapter behind sleep/kill gates, all output M5-bound. Offline by
-default. See `M12_LLM_PLANNER.md`.
+default. See `M12_LLM_PLANNER.md`. M13 adds one outbound action
+(`src/speech/`): Tier2 speech.announce through fixed /usr/bin/say
+with text-bound digest confirmation. See `M13_SPEECH.md`.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements

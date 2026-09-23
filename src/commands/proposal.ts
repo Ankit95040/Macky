@@ -22,6 +22,20 @@ const WORKSPACE_ID_PATTERN = /^[a-z0-9][a-z0-9._-]{0,127}$/i;
  */
 const FORBIDDEN_ARG_CHARS = new Set(["|", "&", ";", ">", "<", "$", "`", "\n", "\r", "\0", "(", ")", "*", "?", "[", "]", "{", "}", "~", "#", "!", "\\", "/"]);
 
+/**
+ * M13 reuse: the exact shell-meaning character set, shared (not
+ * duplicated) so speech text validation cannot drift weaker than the
+ * terminal policy. Pure predicate, no I/O.
+ */
+export function containsForbiddenShellChar(text: string): boolean {
+  for (const ch of text) {
+    if (FORBIDDEN_ARG_CHARS.has(ch)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function argShapeOk(arg: string): boolean {
   if (Array.from(arg).length > COMMAND_LIMITS.MAX_ARG_CHARS) {
     return false;

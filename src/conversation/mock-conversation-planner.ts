@@ -79,6 +79,18 @@ export class MockConversationPlanner implements ConversationPlanner {
       }
       return undefined;
     }
+    // M13 speech language: `say <text...>` emits a speech proposal
+    // carrying ONLY text. Multi-word text preserved verbatim (spaces
+    // are inert inside one argv element). Validated + digest-gated
+    // downstream like everything else.
+    const say = /^say\s+(.+?)\s*$/i.exec(input.userText.trim());
+    if (say !== null) {
+      const text = say[1];
+      if (text !== undefined && text.length > 0) {
+        return { v: 1, operation: "speech-announce", text };
+      }
+      return undefined;
+    }
     // M7 workspace commands (relative paths + present workspaceId).
     // Output is an M7 workspace proposal — still untrusted, still
     // validated + bound + translated downstream.

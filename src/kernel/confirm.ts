@@ -84,6 +84,14 @@ export interface TrustedConfirmationRecord {
   readonly operation: string;
   /** Redacted resource string; "" for unscoped capabilities. */
   readonly resource: string;
+  /**
+   * M13: optional SHA-256 hex digest binding the confirmation to an
+   * exact payload (speech text). hasConfirmation below never reads
+   * this field, so existing capabilities behave bit-identically
+   * whether or not any record carries one. Digest enforcement lives
+   * ONLY in hasDigestConfirmation.
+   */
+  readonly digest?: string;
 }
 
 export type ConfirmationStore = ReadonlyArray<TrustedConfirmationRecord>;
@@ -114,5 +122,27 @@ export function hasConfirmation(
       r.capability === key.capability &&
       r.operation === key.operation &&
       r.resource === key.resource,
+  );
+}
+
+/**
+ * M13 strict digest-bound lookup: all four identity fields PLUS an
+ * exact digest match. A record without a digest NEVER satisfies this
+ * (digests cannot be inherited or defaulted); a wrong digest NEVER
+ * satisfies it. Used by payload-bound capabilities (speech) whose
+ * authorization must cover exact content, not just identity.
+ */
+export function hasDigestConfirmation(
+  store: ConfirmationStore,
+  key: Required<Pick<TrustedConfirmationRecord, "taskId" | "capability" | "operation" | "resource" | "digest">>,
+): boolean {
+  return store.some(
+    (r: TrustedConfirmationRecord): boolean =>
+      r.taskId === key.taskId &&
+      r.capability === key.capability &&
+      r.operation === key.operation &&
+      r.resource === key.resource &&
+      r.digest !== undefined &&
+      r.digest === key.digest,
   );
 }
