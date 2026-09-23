@@ -4,7 +4,7 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M10 — trusted memory boundary (durable, information-only)
+## Status: M11 — controlled macOS application launch (registry-only, no control)
 
 M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
 plus a deterministic, pure-function security kernel skeleton.
@@ -41,7 +41,10 @@ bounded contracts, injection containment. See `M9_WEB_SEARCH.md`.
 M10 adds durable local memory (`src/memory/`): versioned records
 with trusted metadata, Tier1 read/write/delete, atomic bounded
 store, create-only writes, poisoning containment. Information only —
-never authority. See `M10_MEMORY.md`.
+never authority. See `M10_MEMORY.md`. M11 adds controlled macOS
+application launch (`src/apps/`): a 3-entry verified registry,
+Tier1 app.launch, per-launch identity checks, direct trusted spawn.
+Launch only — never control. See `M11_APPS.md`.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements

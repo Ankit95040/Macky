@@ -232,6 +232,22 @@ export const CAPABILITY_DEFINITIONS: ReadonlyArray<CapabilityDefinition> =
       scoped: false,
       description: "Tier 1: durable memory record deletion (M10).",
     }),
+    // ---- M11 controlled application launch. Family "app-control"
+    // already exists (M2), so no M2 type changes — family is
+    // descriptive metadata; the capability id carries enforcement.
+    // Exactly one capability: app.launch, Tier1, sleep-gated,
+    // unscoped (registry-bound, not scope-bound). No execute/control/
+    // terminate/install/register/open-url/open-file capability exists.
+    def({
+      id: "app.launch",
+      family: "app-control",
+      operations: ["launch"],
+      riskTier: 1,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: false,
+      description: "Tier 1: launch a trusted registered macOS app, nothing else (M11).",
+    }),
     // ---- terminal (authorization data only; no execution in M2) ----
     def({
       id: "terminal.run",

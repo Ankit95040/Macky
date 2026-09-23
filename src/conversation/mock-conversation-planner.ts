@@ -68,6 +68,17 @@ export class MockConversationPlanner implements ConversationPlanner {
     if (memory !== undefined) {
       return memory;
     }
+    // M11 launch language: `launch <name>` names a registered logical
+    // application id (`app.<name>`). Emits M11 shapes — registry-bound
+    // and M2-authorized downstream. The mock never sees real paths.
+    const launch = /^launch\s+(\S+)\s*$/i.exec(input.userText.trim());
+    if (launch !== null) {
+      const name = launch[1];
+      if (name !== undefined && name.length > 0) {
+        return { v: 1, operation: "app-launch", appId: `app.${name.toLowerCase()}` };
+      }
+      return undefined;
+    }
     // M7 workspace commands (relative paths + present workspaceId).
     // Output is an M7 workspace proposal — still untrusted, still
     // validated + bound + translated downstream.

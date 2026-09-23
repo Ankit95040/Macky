@@ -49,7 +49,22 @@ M8 behavior frozen; all prior tests MUST remain green unmodified.
 Checkpoint: commit `c2646e9`, tag `m9-web-search`. 261/261 tests.
 M9 behavior frozen; all prior tests MUST remain green unmodified.
 
-## M10 — Trusted Memory Boundary (current)
+## M10 — Trusted Memory Boundary (accepted, frozen)
+
+Checkpoint: commit `856bd6a`, tag `m10-memory-boundary`. 288/288 tests.
+M10 behavior frozen; all prior tests MUST remain green unmodified.
+
+## M11 — Controlled macOS Application Launch (current)
+
+Scope: one Tier1 app.launch capability; 3-entry verified registry
+(TextEdit/Calculator/Terminal); strict appId-only proposals;
+per-launch identity verification; direct /usr/bin/open spawn with
+fixed argv and minimal env; timeout + slot guard; M2-authorized
+service; conversation launch verb; A–BG battery. Launch only — no
+control, scripts, URLs, installs, or autonomy.
+
+Acceptance: Gates 1–49 per the M11 brief, then tag
+`m11-controlled-app-launch`. Do NOT push.
 
 Scope: versioned memory records (trusted IDs/timestamps/task/
 epoch), strict proposal schemas, Tier1 read/write/delete caps,
