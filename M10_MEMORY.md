@@ -47,15 +47,23 @@ in-memory state swaps only on success, so failed writes mutate
 nothing. Memory survives reboot; authority never does (grants live
 only in-session) — both directions tested.
 
-## 6. Authorization flow
+## 6. Authorization flow + task-bound contract
 
 Proposal → registry classification → kill/sleep/slot → M2
-authorize() (sole authority; live task grants) → boundary re-check
-→ substring search (normalized, deterministic, insertion-ordered)
-or create-only write or durable delete → versioned contract →
-audit. No `execute(decision)` equivalent exists. Reads return
-cross-task matches as inert data (single-user namespace); writes
-bind the CURRENT trusted task; deletes need existence + live grant.
+authorize() (sole authority; live grant FOR THE CURRENT TASK) →
+boundary re-check → task-filtered operation → versioned contract →
+audit. No `execute(decision)` equivalent exists.
+
+Memory records are task-bound. Read/write/delete ALL require a live
+grant for the current trusted task — a grant for task-A never
+authorizes task-B, for reads exactly as for mutations. Reads filter
+`record.taskId === current task` BEFORE matching, so foreign records
+never enter candidates, errors, logs, audit, or results. Deletes
+require existence AND ownership (foreign ids answer exactly like
+unknown ids — no existence oracle). Writes bind the current trusted
+task. The planner proposal carries no taskId; the service compares
+trusted-context id against stored ids. Cross-task access of any kind
+is denied.
 
 ## 7. Injection/poisoning containment
 
@@ -91,9 +99,7 @@ frozen M6 import boundary is intact (literals, no new imports).
 
 Substring search has no ranking (insertion order); heuristic screen
 is bypassable by obfuscation (accepted: authority boundary holds);
-single-process slot; cross-task reads visible within the local
-single-user namespace (documented decision, not a leak path to
-authority); no backup/rotation story yet.
+single-process slot; no backup/rotation story yet.
 
 ## 12. Non-goals
 

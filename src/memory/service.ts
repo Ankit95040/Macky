@@ -201,8 +201,10 @@ function dispatchMemory(
       return memoryRefusal(session, "stopped at operation boundary", ok);
     }
     // M2 operations coincide with the dispatched handlers below.
+    // Task binding: every handler receives the TRUSTED task context
+    // and compares record.taskId against it BEFORE exposing data.
     if (proposal.read !== undefined) {
-      return runRead(session, store, proposal.read.query, proposal.read.maxResults ?? MEMORY_LIMITS.MAX_RESULTS);
+      return runRead(session, taskCtx, store, proposal.read.query, proposal.read.maxResults ?? MEMORY_LIMITS.MAX_RESULTS);
     }
     if (proposal.write !== undefined) {
       return runWrite(session, taskCtx, store, proposal.write.content, proposal.write.kind);
@@ -212,7 +214,7 @@ function dispatchMemory(
       const ok = persistOne(session, "request.validation-failed", "memory-delete unparseable");
       return memoryRefusal(session, "memory-delete unparseable", ok);
     }
-    return runDelete(session, store, memoryId);
+    return runDelete(session, taskCtx, store, memoryId);
   } finally {
     releaseMemorySlot();
   }
@@ -236,6 +238,7 @@ function toView(record: MemoryRecord): {
 
 function runRead(
   session: SecureSession,
+  taskCtx: MemoryTaskContext,
   store: MemoryStore,
   query: string,
   maxResults: number,
@@ -244,8 +247,13 @@ function runRead(
   if (!startedOk) {
     return memoryRefusal(session, "audit unhealthy: refused before read", false);
   }
+  // Task-bound filtering BEFORE matching: records owned by other
+  // tasks never enter the candidate set, so they cannot leak through
+  // matches, errors, logs, or audit. Authorization (live grant for
+  // THIS task) already passed above; this is the record-level rule.
+  const owned = store.records.filter((r) => r.taskId === taskCtx.taskId);
   const needle = normalizeForSearch(query);
-  const matched = store.records.filter((r) => normalizeForSearch(r.content).includes(needle));
+  const matched = owned.filter((r) => normalizeForSearch(r.content).includes(needle));
   let truncated = matched.length > maxResults;
   let views = matched.slice(0, maxResults).map(toView);
   for (;;) {
@@ -331,13 +339,21 @@ function runWrite(
   };
 }
 
-function runDelete(session: SecureSession, store: MemoryStore, memoryId: string): DurableResult {
+function runDelete(
+  session: SecureSession,
+  taskCtx: MemoryTaskContext,
+  store: MemoryStore,
+  memoryId: string,
+): DurableResult {
   const startedOk = persistOne(session, "execution.started", "started memory.delete tier=1");
   if (!startedOk) {
     return memoryRefusal(session, "audit unhealthy: refused before delete", false);
   }
-  const index = store.records.findIndex((r) => r.id === memoryId);
-  if (index === -1) {
+  // Ownership rule: the record must exist AND belong to the current
+  // trusted task. Other tasks' ids answer identically to unknown ids
+  // (no existence oracle).
+  const target = store.records.find((r) => r.id === memoryId);
+  if (target === undefined || target.taskId !== taskCtx.taskId) {
     persistOne(session, "execution.rejected", "memory.delete unknown id");
     return memoryRefusal(session, "unknown memory id", session.auditHealthy);
   }
