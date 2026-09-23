@@ -70,6 +70,8 @@ export const SECURITY_EVENT_TYPES = [
   "execution.failed",
   "result.redacted",
   "limit.exceeded",
+  "kill.engaged",
+  "confirmation.recorded",
 ] as const;
 
 export type SecurityEventType = (typeof SECURITY_EVENT_TYPES)[number];

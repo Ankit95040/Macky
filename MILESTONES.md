@@ -14,7 +14,22 @@ Checkpoint: commit `6f8a18f`, tag `m2-security-boundary`. 71/71 tests.
 M2 files MUST NOT be modified in ways that change M2 behavior; M1/M2
 tests MUST remain green unmodified (additive extension only).
 
-## M3 — Trusted Read-Only Execution (current)
+## M3 — Trusted Read-Only Execution (accepted, frozen)
+
+Checkpoint: commit `4fccbab`, tag `m3-read-only-execution`. 104/104 tests.
+M3 behavior frozen; M1/M2/M3 tests MUST remain green unmodified.
+
+## M4 — Durable Security State & Audit (current)
+
+Scope: security-state model + atomic state file, safe boot (SLEEP,
+epoch+1, empty authority), durable JSONL hash-chained audit with
+verify/repair, epoch-bound runDurable, kill/sleep durability,
+bounded storage, trusted bootstrap config, 0o600/0o700 perms,
+recovery + restart (real-subprocess) + secrecy tests. No LLM,
+no autonomy, no secrets subsystem, no network, no database.
+
+Acceptance: Gates 1–16 per the M4 brief, then tag
+`m4-durable-security`.
 
 Scope: narrow trusted executor (`run()` authorizes internally, then
 runs one allowlisted read-only adapter), path/symlink/sensitive

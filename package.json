@@ -1,6 +1,6 @@
 {
   "name": "macky",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Macky — local-first personal AI computer assistant for macOS. M1: foundation + security spec + deterministic kernel skeleton.",
   "type": "module",
@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
   },
   "dependencies": {
     "zod": "^3.23.8"

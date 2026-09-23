@@ -4,7 +4,7 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M3 — trusted read-only execution
+## Status: M4 — durable security state & audit
 
 M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
 plus a deterministic, pure-function security kernel skeleton.
@@ -15,7 +15,11 @@ grants, deterministic pipeline, confirmation boundary, sleep
 enforcement, revocation, audit events, adversarial tests.
 There is no model, voice, sensor, network, write, or autonomous
 code. `src/kernel/` remains OS-free and pure; real reads live only in
-`src/executor/` behind the M2 ALLOW boundary.
+`src/executor/` behind the M2 ALLOW boundary. M4 adds durable local
+security infrastructure (`src/persistence/`, `src/bootstrap/`):
+atomic security-state file, safe boot (always SLEEP, epoch+1, empty
+authority), hash-chained JSONL audit with verification and explicit
+repair, and epoch-bound durable execution. See `M4_DURABLE_SECURITY.md`.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements
