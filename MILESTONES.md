@@ -54,7 +54,21 @@ M9 behavior frozen; all prior tests MUST remain green unmodified.
 Checkpoint: commit `856bd6a`, tag `m10-memory-boundary`. 288/288 tests.
 M10 behavior frozen; all prior tests MUST remain green unmodified.
 
-## M11 — Controlled macOS Application Launch (current)
+## M11 — Controlled macOS Application Launch (accepted, frozen)
+
+Checkpoint: commit `ca54553`, tag `m11-controlled-app-launch`. 302/302 tests.
+M11 behavior frozen; all prior tests MUST remain green unmodified.
+
+## M12 — Real LLM Planner Boundary (current)
+
+Scope: real HTTPS provider abstraction (fixed shape, no SDK) +
+deterministic fake, trusted config, strict JSON parsing with
+duplicate-key refusal, single-inference adapter with sleep/kill
+gates, M5-unchanged integration, A–BO battery. Offline by default;
+no autonomy, loops, tool-calling, or memory automation.
+
+Acceptance: Gates 1–63 per the M12 brief, then tag
+`m12-real-llm-planner`. Do NOT push.
 
 Scope: one Tier1 app.launch capability; 3-entry verified registry
 (TextEdit/Calculator/Terminal); strict appId-only proposals;

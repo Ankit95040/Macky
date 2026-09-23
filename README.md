@@ -4,7 +4,7 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M11 — controlled macOS application launch (registry-only, no control)
+## Status: M12 — real LLM planner boundary (offline by default, mock-tested)
 
 M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
 plus a deterministic, pure-function security kernel skeleton.
@@ -44,7 +44,11 @@ store, create-only writes, poisoning containment. Information only —
 never authority. See `M10_MEMORY.md`. M11 adds controlled macOS
 application launch (`src/apps/`): a 3-entry verified registry,
 Tier1 app.launch, per-launch identity checks, direct trusted spawn.
-Launch only — never control. See `M11_APPS.md`.
+Launch only — never control. See `M11_APPS.md`. M12 integrates a
+real LLM as an untrusted proposal generator (`src/llm/`):
+fixed-shape HTTPS provider, strict JSON parsing, single-inference
+adapter behind sleep/kill gates, all output M5-bound. Offline by
+default. See `M12_LLM_PLANNER.md`.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements
