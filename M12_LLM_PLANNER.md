@@ -46,16 +46,20 @@ is returned AS-IS to the orchestrator, which routes it through the
 unchanged M5 boundary (strict proposal + trusted envelope equality
 + closed translation + M2). No second authorization exists.
 
-## 5. Task binding finding (explicit limitation)
+## 5. Task binding (corrective fix — trusted envelope authoritative)
 
-M5 requires `proposal.taskId` equal to the trusted envelope id,
-while M12 forbids telling the model any taskId. Consequence, kept
-deliberately: model output without the (unknowable) binding id
-cannot authorize — every M12 flow through a real model ends in
-M5 refusal until a future milestone explicitly revisits task
-binding. NOTHING was weakened to accommodate this: no M5 change,
-no taskId injection, no repair. The milestone proves containment
-completely; execution-via-LLM awaits that future decision.
+The LLM does not receive or select task identity. The trusted envelope
+is authoritative. A taskId omitted by the planner is bound to the
+envelope taskId. A planner-supplied mismatching taskId is rejected.
+
+Concretely: `UntrustedProposalSchema.taskId` is optional. Absent →
+the M2 request is built from the envelope value (as it always was).
+Present and equal → same result. Present and different → refusal at
+M5 proposal validation, before authorization. The M2 request NEVER
+uses the proposal value. This is context binding, not repair: no
+capability, scope, approval, or other authorization content is ever
+inferred — only the routing context the trusted caller already holds
+is applied.
 
 ## 6. Singularity rules
 

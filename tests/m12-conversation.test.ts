@@ -40,15 +40,16 @@ function liveCtx(rig: Rig, responses: Array<string>): ReturnType<typeof createOr
 }
 
 describe("M12 conversation AX/AR/AK/AV", () => {
-  it("AX. end-to-end refused without binding; provider called once, no tool", async () => {
+  it("AX. end-to-end executes via trusted binding without model taskId", async () => {
     const rig = rigged();
     try {
-      // No taskId in model output → M5 cannot bind → refused. The secure outcome.
+      // M12 corrective fix: taskId-less model output binds the trusted
+      // envelope task, authorizes against its live grant, and executes.
       const ctx = liveCtx(rig, [JSON.stringify({ plannerVersion: 1, family: "system", operation: "info" })]);
       const r = await handleUserMessage(ctx, "tell me about the system", { taskId: "task-C" });
-      expect(r.status).toBe("refused");
+      expect(r.status).toBe("responded");
       expect(ctx.fake.calls).toBe(1);
-      expect(ctx.conversation.messages.filter((m) => m.role === "tool")).toHaveLength(0);
+      expect(ctx.conversation.messages.filter((m) => m.role === "tool")).toHaveLength(1);
     } finally {
       rig.cleanup();
     }

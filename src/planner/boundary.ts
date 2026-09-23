@@ -96,10 +96,12 @@ export function handleProposal(
     return boundaryRefusal(session, "proposal failed strict validation");
   }
   const proposal: UntrustedProposal = proposalParsed.data;
-  // Trusted task binding: the planner's claimed taskId must equal the
-  // app-assigned envelope taskId. A mismatch (e.g. claiming another
-  // task's authority) is refused — the planner never chooses context.
-  if (proposal.taskId !== envParsed.data.taskId) {
+  // Trusted task binding (M12 corrective fix): a planner-supplied
+  // taskId that differs from the app-assigned envelope taskId is
+  // refused — the planner never chooses context. An absent taskId
+  // binds the envelope value below. The M2 request (line ~121) uses
+  // ONLY the envelope value in all cases.
+  if (proposal.taskId !== undefined && proposal.taskId !== envParsed.data.taskId) {
     return boundaryRefusal(session, "task binding mismatch");
   }
   const capability = TRANSLATION[proposal.family]?.[proposal.operation];

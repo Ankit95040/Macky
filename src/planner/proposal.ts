@@ -1,13 +1,20 @@
 /**
- * Untrusted planner contract (M5 section 1). Versioned, strict.
+ * Untrusted planner contract (M5 section 1, M12 trusted task binding).
+ * Versioned, strict.
  *
- * The planner returns ONLY proposal data: who (taskId), what family,
- * what operation, what target, plus inert rationale. It MUST NOT
- * supply trusted authorization state — risk tier, decisions,
- * approvals, grants, kill-switch/sleep/policy material. The schema is
+ * The planner returns ONLY proposal data: what family, what
+ * operation, what target, plus inert rationale. It MUST NOT supply
+ * trusted authorization state — risk tier, decisions, approvals,
+ * grants, kill-switch/sleep/policy material. The schema is
  * `.strict()`, so any forbidden field fails validation and the
  * proposal is rejected outright. Forbidden fields are NEVER silently
  * stripped: adversarial input is denied, not repaired.
+ *
+ * taskId is OPTIONAL in untrusted output (M12 corrective fix). When
+ * absent, the trusted envelope.taskId is authoritative. When present,
+ * it must equal the trusted envelope.taskId or the proposal is
+ * refused. Either way the planner never selects task identity: the
+ * M2 request is always built from the envelope value.
  */
 import { z } from "zod";
 
@@ -18,7 +25,9 @@ const TASK_ID_PATTERN = /^[a-z0-9][a-z0-9._-]{0,127}$/i;
 export const UntrustedProposalSchema = z
   .object({
     plannerVersion: z.literal(PLANNER_CONTRACT_VERSION),
-    taskId: z.string().min(1).max(128).regex(TASK_ID_PATTERN),
+    // Optional (M12 corrective fix): absent binds the trusted
+    // envelope taskId; present must equal it (checked in boundary.ts).
+    taskId: z.string().min(1).max(128).regex(TASK_ID_PATTERN).optional(),
     family: z.enum(["filesystem", "git", "system"]),
     operation: z.string().min(1).max(64),
     resource: z.string().min(1).max(512).optional(),
