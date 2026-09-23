@@ -30,7 +30,16 @@ import {
 
 /** Trusted translation: (family, operation) → M2 capability. Closed map. */
 const TRANSLATION: Record<string, Record<string, string>> = {
-  filesystem: { read: "filesystem.read", list: "filesystem.read" },
+  // M7 workspace intelligence maps onto read-only filesystem
+  // capabilities (documented in M7_WORKSPACE.md §13). No new trust:
+  // the same M2 registry + M3 adapters authorize and enforce.
+  filesystem: {
+    read: "filesystem.read",
+    list: "filesystem.read",
+    find: "filesystem.find",
+    search: "filesystem.search",
+    tree: "filesystem.tree",
+  },
   git: { status: "git.read", log: "git.read", diff: "git.read" },
   system: { info: "system.info" },
 };
@@ -103,12 +112,15 @@ export function handleProposal(
   // Rationale is intentionally NOT forwarded: prompt-injection text in
   // metadata dies here and can never reach authorization or audit.
   // taskId comes from the trusted envelope, never the proposal.
+  // params (M7) pass through opaquely; M2 schemas bound them and each
+  // adapter accepts exactly its own keys.
   const request = {
     capability,
     operation: proposal.operation,
     ...(proposal.resource !== undefined ? { resource: proposal.resource } : {}),
     taskId: envParsed.data.taskId,
     ...(proposal.requestId !== undefined ? { requestId: proposal.requestId } : {}),
+    ...(proposal.params !== undefined ? { params: proposal.params } : {}),
   };
   return runDurable(session, { epoch: envParsed.data.epoch, request });
 }

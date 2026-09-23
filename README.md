@@ -4,7 +4,7 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M6 — conversation + controlled tool loop (mock, offline)
+## Status: M7 — workspace / file intelligence (read-only)
 
 M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
 plus a deterministic, pure-function security kernel skeleton.
@@ -26,7 +26,11 @@ validate→bind→translate→authorize→execute path. The planner produces
 data only. See `M5_PLANNER.md`. M6 adds session-local conversation
 orchestration (`src/conversation/`): bounded messages, a ≤3-round
 planner/tool loop where every action crosses M5, trusted task IDs,
-and injection batteries. See `M6_CONVERSATION.md`.
+and injection batteries. See `M6_CONVERSATION.md`. M7 adds trusted
+workspace intelligence (`src/workspace/`): registered roots, task
+binding, relative-path resolution onto M3 enforcement, bounded
+find/search/tree adapters, versioned contracts, unicode-safe text.
+Read-only throughout. See `M7_WORKSPACE.md`.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements

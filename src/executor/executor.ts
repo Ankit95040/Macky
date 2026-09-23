@@ -40,6 +40,7 @@ import { grantsForTask, type TrustedTaskGrant } from "../kernel/task-grants.js";
 import type { ConfirmationStore } from "../kernel/confirm.js";
 import type { SleepState } from "../kernel/types.js";
 import { listDirectory, readFile } from "./adapters/fs-read.js";
+import { findFiles, readTree, searchContents } from "./adapters/fs-search.js";
 import { runGitRead, type GitOperation } from "./adapters/git-read.js";
 import { readSystemInfo } from "./adapters/system-info.js";
 
@@ -77,6 +78,11 @@ export const EXECUTABLE_OPERATIONS: ReadonlyArray<{
   Object.freeze({ capability: "git.read", operation: "status" }),
   Object.freeze({ capability: "git.read", operation: "log" }),
   Object.freeze({ capability: "git.read", operation: "diff" }),
+  // M7 workspace intelligence (read-only discovery; same allowlist
+  // discipline — each pair authorized by its own M2 capability).
+  Object.freeze({ capability: "filesystem.find", operation: "find" }),
+  Object.freeze({ capability: "filesystem.search", operation: "search" }),
+  Object.freeze({ capability: "filesystem.tree", operation: "tree" }),
 ]);
 
 function isExecutable(capability: string, operation: string): boolean {
@@ -255,6 +261,45 @@ export function run(request: unknown, ctx: ExecutionContext): ExecutionResult {
       const adapter =
         decision.operation === "list" ? listDirectory(root, resource) : readFile(root, resource);
       return finishAdapter(ctx, log, opName, adapter);
+    }
+
+    // M7 discovery: strict per-operation params. Unknown, missing, or
+    // extra parameter keys refuse — adapters re-validate values.
+    if (
+      decision.capability === "filesystem.find" ||
+      decision.capability === "filesystem.search" ||
+      decision.capability === "filesystem.tree"
+    ) {
+      const rawParams =
+        typeof request === "object" && request !== null
+          ? (request as { params?: unknown }).params
+          : undefined;
+      const keys =
+        typeof rawParams === "object" && rawParams !== null ? Object.keys(rawParams) : undefined;
+      if (decision.operation === "find") {
+        const pattern =
+          keys !== undefined && keys.length === 1 && keys[0] === "pattern"
+            ? (rawParams as Record<string, unknown>)["pattern"]
+            : undefined;
+        if (typeof pattern !== "string") {
+          return refuse(ctx, log, "adapter", "find requires exactly {pattern}", "execution.rejected");
+        }
+        return finishAdapter(ctx, log, opName, findFiles(root, resource, pattern));
+      }
+      if (decision.operation === "search") {
+        const query =
+          keys !== undefined && keys.length === 1 && keys[0] === "query"
+            ? (rawParams as Record<string, unknown>)["query"]
+            : undefined;
+        if (typeof query !== "string") {
+          return refuse(ctx, log, "adapter", "search requires exactly {query}", "execution.rejected");
+        }
+        return finishAdapter(ctx, log, opName, searchContents(root, resource, query));
+      }
+      if (rawParams !== undefined) {
+        return refuse(ctx, log, "adapter", "tree takes no parameters", "execution.rejected");
+      }
+      return finishAdapter(ctx, log, opName, readTree(root, resource));
     }
 
     if (decision.capability === "git.read") {

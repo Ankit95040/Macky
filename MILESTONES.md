@@ -29,7 +29,21 @@ M4 behavior frozen; all prior tests MUST remain green unmodified.
 Checkpoint: commit `8e86131`, tag `m5-planner-boundary`. 148/148 tests.
 M5 behavior frozen; all prior tests MUST remain green unmodified.
 
-## M6 — Conversation + Controlled Tool Loop (current)
+## M6 — Conversation + Controlled Tool Loop (accepted, frozen)
+
+Checkpoint: commit `14e0eed`, tag `m6-conversation-loop`. 173/173 tests.
+M6 behavior frozen; all prior tests MUST remain green unmodified.
+
+## M7 — Workspace / File Intelligence, Read-Only (current)
+
+Scope: trusted workspace registry + task binding, relative-path
+semantics on M3 enforcement, read/find/search/tree adapters,
+versioned contracts, unicode-safe truncation, conversation routing
+via injected router, A–AQ battery. Read-only; no writes, shell,
+network, watchers, memory, or autonomy.
+
+Acceptance: Gates 1–25 per the M7 brief, then tag
+`m7-workspace-readonly`.
 
 Scope: versioned conversation contracts, deterministic bounds,
 orchestrator (validate → trusted taskId → ≤3 planner/tool rounds,

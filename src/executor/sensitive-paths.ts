@@ -26,6 +26,11 @@ const HOME_PREFIXES = [
 const SENSITIVE_BASENAMES = [
   // dotenv / env secrets
   ".env",
+  // secret-store directory names (anywhere — convention carries risk)
+  ".ssh",
+  ".aws",
+  ".gnupg",
+  ".pki",
   // private keys / certs by name
   "id_rsa",
   "id_ed25519",

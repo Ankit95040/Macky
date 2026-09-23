@@ -16,6 +16,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { handleProposal } from "../planner/boundary.js";
+import type { DurableResult } from "../persistence/session.js";
 import type { SecureSession } from "../persistence/session.js";
 import { CONVERSATION_LIMITS, TOOL_TRUNCATION_MARKER } from "./limits.js";
 import {
@@ -33,6 +34,24 @@ export interface OrchestratorContext {
   readonly session: SecureSession;
   readonly conversation: ConversationState;
   readonly planner: ConversationPlanner;
+  /**
+   * Optional proposal router (e.g. an M7 workspace router). Tried
+   * BEFORE the M5 path per output: returning a DurableResult claims
+   * the output, returning undefined falls through to M5. Lets outer
+   * layers extend routing WITHOUT conversation importing them —
+   * the import direction stays conversation → planner-boundary.
+   */
+  readonly proposalRouter?: ProposalRouter;
+  /** Trusted app context forwarded to the planner (not authority). */
+  readonly workspaceId?: string;
+}
+
+/**
+ * Implemented by outer layers (M7 workspace service). Type lives here
+ * so conversation never imports them — dependency direction preserved.
+ */
+export interface ProposalRouter {
+  tryRoute(output: unknown, taskId: string): DurableResult | undefined;
 }
 
 export function createOrchestratorContext(
@@ -148,10 +167,14 @@ function toolTextFor(result: unknown): string {
   } catch {
     text = "[unrepresentable result]";
   }
-  if (text.length > CONVERSATION_LIMITS.MAX_TOOL_RESULT_CHARS) {
-    return `${text.slice(0, CONVERSATION_LIMITS.MAX_TOOL_RESULT_CHARS)}${TOOL_TRUNCATION_MARKER}`;
+  // Unicode-safe truncation (M7 §11): split on code points, never
+  // UTF-16 units, so no lone surrogates. Inline (no new imports) to
+  // preserve the frozen module boundary; workspace/text.ts shares it.
+  const points = Array.from(text);
+  if (points.length <= CONVERSATION_LIMITS.MAX_TOOL_RESULT_CHARS) {
+    return text;
   }
-  return text;
+  return `${points.slice(0, CONVERSATION_LIMITS.MAX_TOOL_RESULT_CHARS).join("")}${TOOL_TRUNCATION_MARKER}`;
 }
 
 /**
@@ -191,7 +214,12 @@ export async function handleUserMessage(
       .map((m) => ({ role: m.role, content: m.content }));
     let output: unknown;
     try {
-      output = await ctx.planner.propose({ taskId, userText: rawMessage, history });
+      output = await ctx.planner.propose({
+        taskId,
+        userText: rawMessage,
+        history,
+        ...(ctx.workspaceId !== undefined ? { workspaceId: ctx.workspaceId } : {}),
+      });
     } catch {
       return toAssistant("failed-planner", iteration, taskId);
     }
@@ -211,7 +239,11 @@ export async function handleUserMessage(
       }
       return toAssistant("responded", iteration, taskId, final.data.text);
     }
-    const handled = handleProposal(ctx.session, { epoch: ctx.session.epoch, taskId, output });
+    // Single routing point: an outer-layer router (M7 workspace) may
+    // claim the output first; otherwise the exact M5 path runs. Either
+    // way the result is a DurableResult handled uniformly below.
+    const routed = ctx.proposalRouter?.tryRoute(output, taskId);
+    const handled = routed ?? handleProposal(ctx.session, { epoch: ctx.session.epoch, taskId, output });
     if (handled.outcome.status === "completed") {
       if (!appendMessage(ctx, "tool", toolTextFor(handled.outcome.result))) {
         return toAssistant("refused-conversation-full", iteration + 1, taskId);

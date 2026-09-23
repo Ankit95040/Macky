@@ -84,6 +84,39 @@ export const CAPABILITY_DEFINITIONS: ReadonlyArray<CapabilityDefinition> =
       scoped: true,
       description: "Tier 3: destructive filesystem operations.",
     }),
+    // ---- M7 workspace intelligence (read-only discovery; same Tier 0
+    // trust as filesystem.read — reading names/matches within a grant
+    // scope grants no more than reading each file would) ----
+    def({
+      id: "filesystem.find",
+      family: "filesystem",
+      operations: ["find"],
+      riskTier: 0,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: true,
+      description: "Tier 0: bounded filename discovery inside grant scope (M7).",
+    }),
+    def({
+      id: "filesystem.search",
+      family: "filesystem",
+      operations: ["search"],
+      riskTier: 0,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: true,
+      description: "Tier 0: bounded content search inside grant scope (M7).",
+    }),
+    def({
+      id: "filesystem.tree",
+      family: "filesystem",
+      operations: ["tree"],
+      riskTier: 0,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: true,
+      description: "Tier 0: bounded structure listing inside grant scope (M7).",
+    }),
     // ---- terminal (authorization data only; no execution in M2) ----
     def({
       id: "terminal.run",

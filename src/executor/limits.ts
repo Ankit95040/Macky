@@ -21,6 +21,24 @@ export const LIMITS = {
   EXEC_TIMEOUT_MS: 10_000,
   /** Filesystem list is single-level only: no recursion, no depth. */
   LIST_RECURSIVE: false,
+  // ---- M7 bounded discovery (conservative for an 8 GB Mac) ----
+  /** Max recursion depth for find/search/tree walks. */
+  MAX_SEARCH_DEPTH: 8,
+  /** Max tree depth (stricter than search; trees fan out). */
+  MAX_TREE_DEPTH: 6,
+  /** Max filesystem entries visited per walk. */
+  MAX_VISITED_ENTRIES: 2000,
+  /** Max entries returned by find. */
+  MAX_FIND_RESULTS: 200,
+  /** Max matches returned by content search. */
+  MAX_SEARCH_MATCHES: 100,
+  /** Per-file read cap during content search. */
+  SEARCH_MAX_FILE_BYTES: 32 * 1024,
+  /** Max nodes in a tree result. */
+  MAX_TREE_NODES: 300,
+  /** Max pattern text (find) / query text (search). */
+  MAX_PATTERN_CHARS: 128,
+  MAX_QUERY_CHARS: 256,
 } as const;
 
 export type LimitName = keyof typeof LIMITS;

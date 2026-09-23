@@ -25,6 +25,10 @@ export const UntrustedProposalSchema = z
     requestId: z.string().min(1).max(128).optional(),
     /** Inert free text. Dropped at the trust boundary, never forwarded. */
     rationale: z.string().max(512).optional(),
+    // M7: bounded opaque per-operation parameters (find pattern, search
+    // query). Forwarded to M2/M3 untouched; each adapter validates
+    // exactly the keys it understands and refuses anything else.
+    params: z.record(z.string().min(1).max(32), z.string().max(256)).optional(),
   })
   .strict();
 

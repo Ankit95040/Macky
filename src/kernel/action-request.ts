@@ -27,6 +27,10 @@ export const ActionRequestSchema = z
     taskId: z.string().min(1).max(128).optional(),
     requestId: z.string().min(1).max(128).optional(),
     metadata: z.record(z.string(), z.string()).optional(),
+    // M7: bounded per-operation parameters (e.g. find pattern, search
+    // query). Opaque to authorization — each adapter validates exactly
+    // the keys it understands and refuses anything else.
+    params: z.record(z.string().min(1).max(32), z.string().max(256)).optional(),
   })
   .strict()
   .superRefine((req, ctx) => {
@@ -64,6 +68,12 @@ export const ActionRequestSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "resource contains NUL byte",
+      });
+    }
+    if (req.params !== undefined && Object.keys(req.params).length > 8) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "params exceeds 8 entries",
       });
     }
   });
