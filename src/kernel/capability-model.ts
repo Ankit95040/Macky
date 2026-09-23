@@ -173,6 +173,30 @@ export const CAPABILITY_DEFINITIONS: ReadonlyArray<CapabilityDefinition> =
       description:
         "Tier 2: fixed /usr/bin/id exposes identity/group data — explicit human approval required (M8).",
     }),
+    // ---- M9 controlled web intelligence (family "network" already
+    // exists, so no M2 type changes). Exactly two Tier1 capabilities —
+    // never a generic network/browser capability. Unscoped: queries
+    // and URLs are validated by the M9 layer, not M2 scopes. ----
+    def({
+      id: "web.search",
+      family: "network",
+      operations: ["search"],
+      riskTier: 1,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: false,
+      description: "Tier 1: bounded web search via trusted provider (M9).",
+    }),
+    def({
+      id: "web.fetch",
+      family: "network",
+      operations: ["fetch"],
+      riskTier: 1,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: false,
+      description: "Tier 1: bounded HTTPS retrieval via trusted provider (M9).",
+    }),
     // ---- terminal (authorization data only; no execution in M2) ----
     def({
       id: "terminal.run",

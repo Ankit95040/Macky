@@ -39,16 +39,22 @@ M6 behavior frozen; all prior tests MUST remain green unmodified.
 Checkpoint: commit `ec220be`, tag `m7-workspace-readonly`. 215/215 tests.
 M7 behavior frozen; all prior tests MUST remain green unmodified.
 
-## M8 — Controlled Terminal Execution (current)
+## M8 — Controlled Terminal Execution (accepted, frozen)
 
-Scope: 5-command trusted registry (Tier0 ×4, Tier2 ×1, Tier3
-denylist), strict command schema, deterministic classifier, bounded
-spawn runner (no shell, minimal env, timeout escalation, slot
-guard), M2-authorized service, conversation `run` language,
-A–BF battery. No shell, sudo, writes, network, or autonomy.
+Checkpoint: commit `99e6ca8`, tag `m8-controlled-terminal`. 241/241 tests.
+M8 behavior frozen; all prior tests MUST remain green unmodified.
 
-Acceptance: Gates 1–25 per the M8 brief, then tag
-`m8-controlled-terminal`. Do NOT push.
+## M9 — Controlled Web Search Intelligence, Read-Only (current)
+
+Scope: Tier1 web.search/web.fetch only (no generic network cap),
+strict proposal schemas, HTTPS-only SSRF URL policy with redirect
+revalidation, GET-only provider abstraction + deterministic mock,
+bounded Unicode-safe contracts, prompt-injection containment,
+M2-authorized service, conversation websearch/webfetch, A–BD
+battery. No browser, cookies, auth, uploads, or autonomy.
+
+Acceptance: Gates 1–30 per the M9 brief, then tag `m9-web-search`.
+Do NOT push.
 
 Scope: trusted workspace registry + task binding, relative-path
 semantics on M3 enforcement, read/find/search/tree adapters,

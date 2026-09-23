@@ -4,7 +4,7 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M8 — controlled terminal execution (5 fixed commands, no shell)
+## Status: M9 — controlled web search (read-only, mock provider, offline)
 
 M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
 plus a deterministic, pure-function security kernel skeleton.
@@ -34,7 +34,10 @@ Read-only throughout. See `M7_WORKSPACE.md`. M8 adds strictly
 controlled command execution (`src/commands/`): a 5-entry trusted
 registry, deterministic classifier, Tier3-deny, bounded spawn with
 no shell and minimal env, all M2-authorized. See
-`M8_COMMAND_EXECUTION.md`.
+`M8_COMMAND_EXECUTION.md`. M9 adds read-only web search and bounded
+retrieval (`src/web/`): Tier1 capabilities, HTTPS-only SSRF policy,
+GET-only provider abstraction with a deterministic offline mock,
+bounded contracts, injection containment. See `M9_WEB_SEARCH.md`.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements

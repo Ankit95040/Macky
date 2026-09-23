@@ -52,6 +52,14 @@ export class MockConversationPlanner implements ConversationPlanner {
     if (last !== undefined && last.role === "tool" && this.mode === "helpful") {
       return { type: "final", text: "done." };
     }
+    // M9 web language: `websearch <query>` / `webfetch <url>`. After
+    // the final check (so completed tool rounds terminate), like the
+    // workspace branch below. Emits M9 shapes — validated,
+    // SSRF-checked, and M2-authorized downstream. No workspace needed.
+    const web = this.webCommand(input);
+    if (web !== undefined) {
+      return web;
+    }
     // M7 workspace commands (relative paths + present workspaceId).
     // Output is an M7 workspace proposal — still untrusted, still
     // validated + bound + translated downstream.
@@ -69,6 +77,28 @@ export class MockConversationPlanner implements ConversationPlanner {
    * Output shape {v, workspaceId, op, …} is validated, bound, and
    * translated downstream — untrusted like everything else.
    */
+  private webCommand(input: ConversationPlannerInput): unknown {
+    const text = input.userText.trim();
+    // Contract version literal (not imported: conversation must not
+    // import the web layer — same frozen import boundary as M7).
+    const search = /^websearch\s+(.+?)\s*$/i.exec(text);
+    if (search !== null) {
+      const query = search[1];
+      if (query !== undefined && query.length > 0) {
+        return { v: 1, operation: "web-search", query };
+      }
+      return undefined;
+    }
+    const fetch = /^webfetch\s+(\S+)\s*$/i.exec(text);
+    if (fetch !== null) {
+      const url = fetch[1];
+      if (url !== undefined) {
+        return { v: 1, operation: "web-fetch", url };
+      }
+    }
+    return undefined;
+  }
+
   private workspaceCommand(input: ConversationPlannerInput): unknown {
     const workspaceId = input.workspaceId;
     if (workspaceId === undefined) {
