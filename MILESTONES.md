@@ -8,7 +8,25 @@ M1 files MUST NOT be modified; M1 tests MUST remain green unmodified.
 Scope: repo scaffold, normative docs, deterministic kernel skeleton,
 Vitest gates. No model, sensors, or OS control.
 
-## M2 — Deterministic Security Boundary (current)
+## M2 — Deterministic Security Boundary (accepted, frozen)
+
+Checkpoint: commit `6f8a18f`, tag `m2-security-boundary`. 71/71 tests.
+M2 files MUST NOT be modified in ways that change M2 behavior; M1/M2
+tests MUST remain green unmodified (additive extension only).
+
+## M3 — Trusted Read-Only Execution (current)
+
+Scope: narrow trusted executor (`run()` authorizes internally, then
+runs one allowlisted read-only adapter), path/symlink/sensitive
+controls, secret sanitizer, resource limits, git fixed-argv adapter,
+system-info allowlist, sleep re-check, kernel kill switch, execution
+audit events, adversarial tests. No writes, no network, no model,
+no autonomy, no background operation.
+
+Acceptance: Gates 1–10 per the M3 brief (M1+M2 regression, M3 tests,
+typecheck, static inspection, dependency audit, secret scan, manual
+adversarial review, scope audit, clean tree) then tag
+`m3-read-only-execution`.
 
 Scope: structured action requests, capability registry, task-scoped
 grants, deterministic pipeline, risk tiers, confirmation boundary,

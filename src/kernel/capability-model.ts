@@ -256,6 +256,21 @@ export const CAPABILITY_DEFINITIONS: ReadonlyArray<CapabilityDefinition> =
       scoped: false,
       description: "Tier 0: enter SLEEP, always available (M1-compatible).",
     }),
+    // ---- system info (M3: narrow read-only, structured fields only) ----
+    def({
+      id: "system.info",
+      // Family is descriptive metadata only; sleep-gating and tier carry
+      // the enforcement. "sleep" hosts the other system-level entries.
+      family: "sleep",
+      operations: ["info"],
+      riskTier: 0,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: false,
+      description:
+        "Tier 0: read allowlisted system fields (os, version, arch, " +
+        "hostname, runtime). No environment, no secrets (M3).",
+    }),
   ]);
 
 /**

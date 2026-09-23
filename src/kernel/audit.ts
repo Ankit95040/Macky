@@ -64,6 +64,12 @@ export const SECURITY_EVENT_TYPES = [
   "capability.revoked",
   "sleep.entered",
   "sleep.woken",
+  "execution.rejected",
+  "execution.started",
+  "execution.completed",
+  "execution.failed",
+  "result.redacted",
+  "limit.exceeded",
 ] as const;
 
 export type SecurityEventType = (typeof SECURITY_EVENT_TYPES)[number];

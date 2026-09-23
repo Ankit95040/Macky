@@ -11,3 +11,4 @@ export * from "./action-request.js";
 export * from "./capability-model.js";
 export * from "./task-grants.js";
 export * from "./authorize.js";
+export * from "./kill-switch.js";
