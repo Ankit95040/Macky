@@ -4,7 +4,7 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M9 — controlled web search (read-only, mock provider, offline)
+## Status: M10 — trusted memory boundary (durable, information-only)
 
 M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
 plus a deterministic, pure-function security kernel skeleton.
@@ -38,6 +38,10 @@ no shell and minimal env, all M2-authorized. See
 retrieval (`src/web/`): Tier1 capabilities, HTTPS-only SSRF policy,
 GET-only provider abstraction with a deterministic offline mock,
 bounded contracts, injection containment. See `M9_WEB_SEARCH.md`.
+M10 adds durable local memory (`src/memory/`): versioned records
+with trusted metadata, Tier1 read/write/delete, atomic bounded
+store, create-only writes, poisoning containment. Information only —
+never authority. See `M10_MEMORY.md`.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements

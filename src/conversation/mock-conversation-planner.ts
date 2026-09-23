@@ -60,6 +60,14 @@ export class MockConversationPlanner implements ConversationPlanner {
     if (web !== undefined) {
       return web;
     }
+    // M10 memory language: `memoryread <query>`,
+    // `memorywrite <kind> <content>`, `memorydelete <id>`. Emits M10
+    // shapes — validated and M2-authorized downstream. Memory needs
+    // no workspace context.
+    const memory = this.memoryCommand(input);
+    if (memory !== undefined) {
+      return memory;
+    }
     // M7 workspace commands (relative paths + present workspaceId).
     // Output is an M7 workspace proposal — still untrusted, still
     // validated + bound + translated downstream.
@@ -94,6 +102,46 @@ export class MockConversationPlanner implements ConversationPlanner {
       const url = fetch[1];
       if (url !== undefined) {
         return { v: 1, operation: "web-fetch", url };
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * M10 memory micro-language: `memoryread <query>`,
+   * `memorywrite <kind> <content>`, `memorydelete <id>`. No workspace
+   * context needed. Output shape {v, operation, …} is validated and
+   * M2-authorized downstream — untrusted like everything else.
+   */
+  private memoryCommand(input: ConversationPlannerInput): unknown {
+    const text = input.userText.trim();
+    // Contract version literal (not imported: conversation must not
+    // import the memory layer — same frozen import boundary).
+    const read = /^memoryread\s+(.+?)\s*$/i.exec(text);
+    if (read !== null) {
+      const query = read[1];
+      if (query !== undefined && query.length > 0) {
+        return { v: 1, operation: "memory-read", query };
+      }
+      return undefined;
+    }
+    const write = /^memorywrite\s+(\S+)\s+(.+?)\s*$/i.exec(text);
+    if (write !== null) {
+      const kind = write[1]?.toLowerCase();
+      const content = write[2];
+      if (
+        (kind === "fact" || kind === "preference" || kind === "project" || kind === "instruction") &&
+        content !== undefined
+      ) {
+        return { v: 1, operation: "memory-write", content, kind };
+      }
+      return { note: "no actionable command" };
+    }
+    const del = /^memorydelete\s+(\S+)\s*$/i.exec(text);
+    if (del !== null) {
+      const memoryId = del[1];
+      if (memoryId !== undefined) {
+        return { v: 1, operation: "memory-delete", memoryId };
       }
     }
     return undefined;

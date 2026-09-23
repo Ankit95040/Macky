@@ -197,6 +197,41 @@ export const CAPABILITY_DEFINITIONS: ReadonlyArray<CapabilityDefinition> =
       scoped: false,
       description: "Tier 1: bounded HTTPS retrieval via trusted provider (M9).",
     }),
+    // ---- M10 trusted memory boundary (family "memory" already exists,
+    // so no M2 type changes). Exactly three Tier1 capabilities — reads,
+    // creates, deletes. No admin/execute/export/import/policy/search
+    // capability exists. Unscoped: the single trusted namespace is
+    // M10-validated, not M2-scoped. ----
+    def({
+      id: "memory.read",
+      family: "memory",
+      operations: ["read"],
+      riskTier: 1,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: false,
+      description: "Tier 1: bounded memory retrieval as untrusted data (M10).",
+    }),
+    def({
+      id: "memory.write",
+      family: "memory",
+      operations: ["write"],
+      riskTier: 1,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: false,
+      description: "Tier 1: create-only memory records with trusted metadata (M10).",
+    }),
+    def({
+      id: "memory.delete",
+      family: "memory",
+      operations: ["delete"],
+      riskTier: 1,
+      requiresConfirmation: false,
+      sleepGated: true,
+      scoped: false,
+      description: "Tier 1: durable memory record deletion (M10).",
+    }),
     // ---- terminal (authorization data only; no execution in M2) ----
     def({
       id: "terminal.run",

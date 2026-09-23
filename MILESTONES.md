@@ -44,7 +44,22 @@ M7 behavior frozen; all prior tests MUST remain green unmodified.
 Checkpoint: commit `99e6ca8`, tag `m8-controlled-terminal`. 241/241 tests.
 M8 behavior frozen; all prior tests MUST remain green unmodified.
 
-## M9 — Controlled Web Search Intelligence, Read-Only (current)
+## M9 — Controlled Web Search Intelligence, Read-Only (accepted, frozen)
+
+Checkpoint: commit `c2646e9`, tag `m9-web-search`. 261/261 tests.
+M9 behavior frozen; all prior tests MUST remain green unmodified.
+
+## M10 — Trusted Memory Boundary (current)
+
+Scope: versioned memory records (trusted IDs/timestamps/task/
+epoch), strict proposal schemas, Tier1 read/write/delete caps,
+atomic bounded JSON store, secret heuristic, create-only writes,
+durable deletes, substring search, prompt-injection containment,
+conversation verbs, A–AX battery. Information only — never
+authority. No embeddings, network, autonomy, or secret vault.
+
+Acceptance: Gates 1–34 per the M10 brief, then tag
+`m10-memory-boundary`. Do NOT push.
 
 Scope: Tier1 web.search/web.fetch only (no generic network cap),
 strict proposal schemas, HTTPS-only SSRF URL policy with redirect
