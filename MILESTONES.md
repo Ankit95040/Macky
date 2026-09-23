@@ -24,7 +24,21 @@ M3 behavior frozen; M1/M2/M3 tests MUST remain green unmodified.
 Checkpoint: commit `37ac133`, tag `m4-durable-security`. 130/130 tests.
 M4 behavior frozen; all prior tests MUST remain green unmodified.
 
-## M5 — LLM Planner Integration (current)
+## M5 — LLM Planner Integration (accepted, frozen)
+
+Checkpoint: commit `8e86131`, tag `m5-planner-boundary`. 148/148 tests.
+M5 behavior frozen; all prior tests MUST remain green unmodified.
+
+## M6 — Conversation + Controlled Tool Loop (current)
+
+Scope: versioned conversation contracts, deterministic bounds,
+orchestrator (validate → trusted taskId → ≤3 planner/tool rounds,
+every action via M5 handleProposal), mock conversational planner,
+A–O injection battery, structural import test. Session-local only:
+no memory, UI, voice, real LLM, network, autonomy.
+
+Acceptance: Gates 1–15 per the M6 brief, then tag
+`m6-conversation-loop`.
 
 Scope: versioned strict planner contract, offline MockPlanner
 (valid + malicious), single trust boundary (validate → trusted

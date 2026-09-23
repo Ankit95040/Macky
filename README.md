@@ -4,7 +4,7 @@ Local-first personal AI computer assistant for macOS.
 
 > Core principle: the AI model is UNTRUSTED. The security layer is TRUSTED.
 
-## Status: M5 — LLM planner integration (mock, offline)
+## Status: M6 — conversation + controlled tool loop (mock, offline)
 
 M1 (foundation, frozen, tag `m1-foundation`) contains normative specs
 plus a deterministic, pure-function security kernel skeleton.
@@ -23,7 +23,10 @@ repair, and epoch-bound durable execution. See `M4_DURABLE_SECURITY.md`.
 M5 adds the untrusted planner boundary (`src/planner/`): a versioned
 strict proposal contract, an offline mock planner, and a single
 validate→bind→translate→authorize→execute path. The planner produces
-data only. See `M5_PLANNER.md`.
+data only. See `M5_PLANNER.md`. M6 adds session-local conversation
+orchestration (`src/conversation/`): bounded messages, a ≤3-round
+planner/tool loop where every action crosses M5, trusted task IDs,
+and injection batteries. See `M6_CONVERSATION.md`.
 
 - `ARCHITECTURE.md` — control flow and trust placement
 - `SECURITY_SPEC.md` — 15 normative security requirements
